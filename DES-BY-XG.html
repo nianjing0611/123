@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>徐菁菁· 室内设计作品集</title>
+    <meta name="description" content="以空间为纸，以光影为笔。6年室内设计与软装设计经验，专注于打造有温度、有故事的居住空间。杭州良工装饰集团硬装设计师徐菁菁作品集。">
+    <meta name="keywords" content="室内设计,软装设计,杭州室内设计师,徐菁菁,作品集,住宅设计,商业空间设计,良工装饰">
+    <!-- Open Graph 社交分享标签（对 QQ/微博/钉钉/Facebook 等平台有效） -->
+    <meta property="og:title" content="徐菁菁· 室内设计作品集">
+    <meta property="og:description" content="以空间为纸，以光影为笔。6年设计经验，专注于打造有温度、有故事的居住空间。">
+    <meta property="og:image" content="https://aka.doubaocdn.com/s/N68VJf6blK">
+    <meta property="og:url" content="https://123-93w.pages.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="徐菁菁室内设计">
+    <!-- Twitter Card 标签 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="徐菁菁· 室内设计作品集">
+    <meta name="twitter:description" content="以空间为纸，以光影为笔。6年设计经验，专注于打造有温度、有故事的居住空间。">
+    <meta name="twitter:image" content="https://aka.doubaocdn.com/s/N68VJf6blK">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
     <script>
@@ -871,6 +885,210 @@
                 }, 100);
             });
         }
+    </script>
+
+    <!-- ===== 分享海报功能 ===== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        #shareFab {
+            position: fixed; right: 20px; bottom: 80px; z-index: 50;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #A68B6A; color: #fff; border: none; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 4px 14px rgba(166,139,106,.45);
+            font-size: 13px; line-height: 1.2; transition: transform .2s;
+        }
+        #shareFab:hover { transform: scale(1.08); }
+        #shareFab svg { width: 22px; height: 22px; margin-bottom: 2px; }
+        #posterModal {
+            position: fixed; inset: 0; z-index: 100; display: none;
+            background: rgba(0,0,0,.82); align-items: center; justify-content: center; padding: 20px;
+        }
+        #posterModal.show { display: flex; }
+        #posterWrap { max-width: 380px; width: 100%; text-align: center; }
+        #posterImg { width: 100%; border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+        #posterTip { color: #fff; margin-top: 16px; font-size: 14px; opacity: .9; }
+        #posterClose {
+            margin-top: 14px; padding: 8px 28px; cursor: pointer;
+            background: rgba(255,255,255,.15); color: #fff;
+            border: 1px solid rgba(255,255,255,.3); border-radius: 22px; font-size: 14px;
+        }
+    </style>
+    <button id="shareFab" aria-label="生成分享海报">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        分享
+    </button>
+    <div id="posterModal">
+        <div id="posterWrap">
+            <img id="posterImg" alt="分享海报" />
+            <p id="posterTip">长按图片保存，即可分享到微信朋友圈/好友</p>
+            <button id="posterClose">关闭</button>
+        </div>
+    </div>
+    <script>
+    (function(){
+        var SITE_URL = 'https://123-93w.pages.dev';
+        var btn = document.getElementById('shareFab');
+        var modal = document.getElementById('posterModal');
+        var posterImg = document.getElementById('posterImg');
+        var closeBtn = document.getElementById('posterClose');
+        var generated = false;
+
+        function loadImage(src){
+            return new Promise(function(resolve,reject){
+                var img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function(){ resolve(img); };
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        function drawRoundRect(ctx,x,y,w,h,r){
+            ctx.beginPath();
+            ctx.moveTo(x+r,y);
+            ctx.arcTo(x+w,y,x+w,y+h,r);
+            ctx.arcTo(x+w,y+h,x,y+h,r);
+            ctx.arcTo(x,y+h,x,y,r);
+            ctx.arcTo(x,y,x+w,y,r);
+            ctx.closePath();
+        }
+
+        function generatePoster(){
+            var W = 750, H = 1200;
+            var canvas = document.createElement('canvas');
+            canvas.width = W; canvas.height = H;
+            var ctx = canvas.getContext('2d');
+
+            // 背景
+            ctx.fillStyle = '#F8F6F2';
+            ctx.fillRect(0,0,W,H);
+
+            // 顶部色条
+            ctx.fillStyle = '#A68B6A';
+            ctx.fillRect(0,0,W,8);
+
+            // 姓名
+            ctx.fillStyle = '#2C2C2C';
+            ctx.font = 'bold 56px "Noto Serif SC", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('徐菁菁', W/2, 180);
+
+            // 职业标签
+            ctx.fillStyle = '#8B8680';
+            ctx.font = '26px "Noto Sans SC", sans-serif';
+            ctx.fillText('室内设计师 · 作品集', W/2, 225);
+
+            // 分隔线
+            ctx.strokeStyle = '#E8E4DC';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(270, 260); ctx.lineTo(480, 260);
+            ctx.stroke();
+
+            // 标语
+            ctx.fillStyle = '#2C2C2C';
+            ctx.font = '34px "Noto Serif SC", serif';
+            ctx.fillText('以空间为纸 以光影为笔', W/2, 325);
+
+            ctx.fillStyle = '#8B8680';
+            ctx.font = '22px "Noto Sans SC", sans-serif';
+            ctx.fillText('专注打造有温度、有故事的居住空间', W/2, 365);
+
+            // 数据区
+            ctx.fillStyle = '#A68B6A';
+            ctx.font = 'bold 46px "Noto Serif SC", serif';
+            ctx.fillText('6+', 250, 470);
+            ctx.fillText('50+', 500, 470);
+            ctx.fillStyle = '#8B8680';
+            ctx.font = '18px "Noto Sans SC", sans-serif';
+            ctx.fillText('年设计经验', 250, 502);
+            ctx.fillText('完成项目', 500, 502);
+
+            // 联系方式
+            ctx.fillStyle = '#2C2C2C';
+            ctx.font = '22px "Noto Sans SC", sans-serif';
+            ctx.fillText('195 1123 1464', W/2, 580);
+            ctx.fillStyle = '#8B8680';
+            ctx.font = '16px "Noto Sans SC", sans-serif';
+            ctx.fillText('杭州 · 秋涛北路313号 五号创意园9号楼', W/2, 612);
+
+            // 作品图占位框
+            ctx.fillStyle = '#E8E4DC';
+            drawRoundRect(ctx, 100, 660, 550, 220, 12);
+            ctx.fill();
+            ctx.fillStyle = '#A68B6A';
+            ctx.font = '20px "Noto Sans SC", sans-serif';
+            ctx.fillText('— 精选作品集 —', W/2, 775);
+
+            return new Promise(function(resolve){
+                // 生成二维码
+                var qrDiv = document.createElement('div');
+                qrDiv.style.display = 'none';
+                document.body.appendChild(qrDiv);
+                new QRCode(qrDiv, { text: SITE_URL, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+
+                setTimeout(function(){
+                    var qrCanvas = qrDiv.querySelector('canvas');
+                    var qrImgEl = qrDiv.querySelector('img');
+                    var qrSize = 200, qrX = W/2 - qrSize/2, qrY = 920;
+
+                    // 二维码白底卡片
+                    ctx.fillStyle = '#fff';
+                    drawRoundRect(ctx, qrX-16, qrY-16, qrSize+32, qrSize+32, 12);
+                    ctx.fill();
+
+                    if(qrCanvas){
+                        ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
+                    } else if(qrImgEl && qrImgEl.src){
+                        var tmp = new Image();
+                        tmp.onload = function(){
+                            ctx.drawImage(tmp, qrX, qrY, qrSize, qrSize);
+                            finish();
+                        };
+                        tmp.src = qrImgEl.src;
+                        return;
+                    }
+                    finish();
+                }, 200);
+
+                function finish(){
+                    // 二维码提示
+                    ctx.fillStyle = '#8B8680';
+                    ctx.font = '22px "Noto Sans SC", sans-serif';
+                    ctx.fillText('扫码查看完整作品集', W/2, 1170);
+
+                    // 底部署名
+                    ctx.fillStyle = '#A68B6A';
+                    ctx.font = '16px "Noto Sans SC", sans-serif';
+                    ctx.fillText('Jessica 徐菁菁 · 室内设计', W/2, H - 25);
+
+                    document.body.removeChild(qrDiv);
+                    resolve(canvas.toDataURL('image/png'));
+                }
+            });
+        }
+
+        btn.addEventListener('click', async function(){
+            btn.querySelector('svg').nextSibling.textContent = ' 生成中';
+            if(!generated){
+                try {
+                    posterImg.src = await generatePoster();
+                    generated = true;
+                } catch(e){
+                    alert('海报生成失败，请重试');
+                    console.error(e);
+                }
+            }
+            modal.classList.add('show');
+            // 修复文字节点
+            var lastNode = btn.childNodes[btn.childNodes.length-1];
+            if(lastNode && lastNode.nodeType === 3){ lastNode.textContent = ' 分享'; }
+        });
+
+        closeBtn.addEventListener('click', function(){ modal.classList.remove('show'); });
+        modal.addEventListener('click', function(e){ if(e.target === modal){ modal.classList.remove('show'); } });
+    })();
     </script>
 </body>
 </html>
