@@ -20,6 +20,24 @@
     <meta name="twitter:image" content="./share-image.jpg">
     <!-- 国产浏览器（QQ/OPPO/UC/百度等）分享缩略图标签 -->
     <link rel="image_src" href="./share-image.jpg">
+    <!-- 动态修正 og 标签为绝对路径，确保微信等社交平台能正确抓取 -->
+    <script>
+    (function(){
+        var origin = window.location.origin;
+        var path = window.location.pathname.replace(/\/[^\/]*$/, '/');
+        var abs = origin + path;
+        var absImg = abs + 'share-image.jpg';
+        function setMeta(selector, content) {
+            var el = document.querySelector(selector);
+            if (el) el.setAttribute('content', content);
+        }
+        setMeta('meta[property="og:image"]', absImg + '?v=2');
+        setMeta('meta[property="og:url"]', abs);
+        setMeta('meta[name="twitter:image"]', absImg + '?v=2');
+        var imgSrc = document.querySelector('link[rel="image_src"]');
+        if (imgSrc) imgSrc.setAttribute('href', absImg + '?v=2');
+    })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
     <script>
